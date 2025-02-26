@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 from typing import Any
+from src.config.definitions.llm_definitions import NarrationHandlingEnum, NarrationIndicatorsEnum
 from src.conversation.action import action
 from src.config.config_values import ConfigValues
 from src.config.mantella_config_value_definitions_new import MantellaConfigValueDefinitionsNew
@@ -263,8 +264,13 @@ LLM parameter list must follow the Python dictionary format: https://www.w3schoo
             # self.stop_llm_generation_on_assist_keyword: bool = self.__definitions.get_bool_value("stop_llm_generation_on_assist_keyword")
             # self.try_filter_narration: bool = self.__definitions.get_bool_value("try_filter_narration")
 
-            self.narration_handling = self.__definitions.get_string_value("narration_handling").strip().lower()
+            self.narration_handling: NarrationHandlingEnum = self.__definitions.get_enum_value("narration_handling", NarrationHandlingEnum)
             self.narrator_voice = self.__definitions.get_string_value("narrator_voice")
+            self.narration_start_indicators = self.__definitions.get_string_list_value("narration_start_indicators")
+            self.narration_end_indicators = self.__definitions.get_string_list_value("narration_end_indicators")
+            self.speech_start_indicators = self.__definitions.get_string_list_value("speech_start_indicators")
+            self.speech_end_indicators = self.__definitions.get_string_list_value("speech_end_indicators")
+            self.narration_indicators: NarrationIndicatorsEnum = self.__definitions.get_enum_value("narration_indicators", NarrationIndicatorsEnum)
             
 
             self.remove_mei_folders = self.__definitions.get_bool_value("remove_mei_folders")
@@ -293,6 +299,8 @@ LLM parameter list must follow the Python dictionary format: https://www.w3schoo
             #HTTP
             self.port = self.__definitions.get_int_value("port")
             self.show_http_debug_messages: bool = self.__definitions.get_bool_value("show_http_debug_messages")
+
+            self.advanced_logs = self.__definitions.get_bool_value("advanced_logs")
 
             self.save_audio_data_to_character_folder = self.__definitions.get_bool_value("save_audio_data_to_character_folder")
 

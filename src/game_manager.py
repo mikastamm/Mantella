@@ -2,6 +2,7 @@ import logging
 from typing import Any, Hashable
 import regex
 from src.llm.summary_client import SummaryLLMCLient
+from src.config.definitions.llm_definitions import NarrationHandlingEnum
 from src.games.equipment import Equipment, EquipmentItem
 from src.games.external_character_info import external_character_info
 from src.games.gameable import gameable
@@ -36,7 +37,7 @@ class GameStateManager:
         self.__language_info: dict[Hashable, str] = language_info 
         self.__client: LLMClient = client
         self.__chat_manager: ChatManager = chat_manager
-        self.__rememberer: remembering = summaries(game, config.memory_prompt, config.resummarize_prompt, summary_client, language_info['language'])
+        self.__rememberer: remembering = summaries(game, config, summary_client, language_info['language'])
         self.__talk: conversation | None = None
         self.__mic_input: bool = False
         self.__mic_ptt: bool = False # push-to-talk
@@ -45,7 +46,7 @@ class GameStateManager:
         self.__stt: Transcriber | None = None
         self.__first_line: bool = True
         self.__automatic_greeting: bool = config.automatic_greeting
-        self.__conv_has_narrator: bool = config.narration_handling == "use narrator"
+        self.__conv_has_narrator: bool = config.narration_handling == NarrationHandlingEnum.USE_NARRATOR
 
     ###### react to calls from the game #######
     @utils.time_it
@@ -73,7 +74,7 @@ class GameStateManager:
             
         return {
             comm_consts.KEY_REPLYTYPE: comm_consts.KEY_REPLYTTYPE_STARTCONVERSATIONCOMPLETED,
-            comm_consts.KEY_STARTCONVERSATION_USENARRATOR: self.__config.narration_handling == "use narrator"}
+            comm_consts.KEY_STARTCONVERSATION_USENARRATOR: self.__conv_has_narrator}
         
     
     @utils.time_it
