@@ -279,7 +279,7 @@ class summaries(remembering):
                     game=self.__game,
                     bio=npcInfo.character.bio,
                     bios='\n'.join(bios),
-                    summary=self.__load_summary_file_contents(npcInfo.character, world_id)
+                    conversation_history=self.__load_summary_file_contents(npcInfo.character, world_id)
                 )
         while True:
             try:
