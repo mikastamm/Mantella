@@ -10,7 +10,7 @@ from src.conversation.action import action
 from src.llm.sentence import sentence
 from src.output_manager import ChatManager
 from src.remember.remembering import remembering
-from remember.summaries import summaries
+from src.remember.summaries import summaries
 
 from src.config.config_loader import ConfigLoader
 from src.llm.llm_client import LLMClient
