@@ -100,10 +100,10 @@ class conversation:
         add_or_remove_messages = []
         for npc in update_result.added_npcs:
             if not npc.is_player_character:
-                add_or_remove_messages.append(join_message(npc))
+                add_or_remove_messages.append(join_message(npc, self.__context.config))
         for npc in update_result.removed_npcs:
             if not npc.is_player_character:
-                add_or_remove_messages.append(leave_message(npc))
+                add_or_remove_messages.append(leave_message(npc, self.__context.config))
         return add_or_remove_messages
 
     @utils.time_it
@@ -302,7 +302,7 @@ class conversation:
         """Reloads the message thread and removes old messages if getting close to context limits"""
         removed_messages = self.__messages.reload_message_thread(new_prompt, self.__llm_client.is_too_long, self.TOKEN_LIMIT_RELOAD_MESSAGES)
         if len(removed_messages) > 0:
-            removed_messages_thread = message_thread(None)
+            removed_messages_thread = message_thread(self.__context.config,None)
             for message in removed_messages:
                 removed_messages_thread.add_message(message)
             # Summarize the removed messages
