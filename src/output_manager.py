@@ -38,7 +38,7 @@ class ChatManager:
         self.__stop_generation = asyncio.Event()
         self.__tts_access_lock = Lock()
         self.__is_first_sentence: bool = False
-        self.__end_of_sentence_chars = ['.', '?', '!', ':', ';', '。', '？', '！', '；', '：']
+        self.__end_of_sentence_chars = ['.', '?', '!', ';', '。', '？', '！', '；', '：']
         self.__end_of_sentence_chars = [unicodedata.normalize('NFKC', char) for char in self.__end_of_sentence_chars]
 
     @property
@@ -60,6 +60,12 @@ class ChatManager:
 
         character_to_talk = content.speaker
         text = ' ' + content.text + ' '
+        
+        # Check for short voicelines before sending to TTS
+        if len(content.text.strip()) < 3:
+            logging.warning(f"Skipping TTS for voiceline that is too-short: '{content.text.strip()}'")
+            # Return a sentence object without audio - skipping TTS entirely
+            return mantella_sentence(sentence_content(character_to_talk, text, content.sentence_type, True), "", 0)
 
         with self.__tts_access_lock:
             try:
@@ -75,7 +81,7 @@ class ChatManager:
                 logging.log(29, error_text)
                 return mantella_sentence(sentence_content(character_to_talk, text, content.sentence_type, True), "", 0, error_text)
             self.__is_first_sentence = False
-            return mantella_sentence(sentence_content(character_to_talk, text, content.sentence_type, content.is_system_generated_sentence), audio_file, self.get_audio_duration(audio_file))
+            return mantella_sentence(sentence_content(character_to_talk, text, content.sentence_type, content.is_system_generated_sentence, content.actions), audio_file, self.get_audio_duration(audio_file))
 
     @utils.time_it
     def generate_response(self, messages: message_thread, characters: Characters, blocking_queue: sentence_queue, actions: list[action]):
