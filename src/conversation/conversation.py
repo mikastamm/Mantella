@@ -236,7 +236,7 @@ class conversation:
         elif self.__has_conversation_ended(text):
             new_message.is_system_generated_message = True # Flag message containing goodbye as a system message to exclude from summary
             self.initiate_end_sequence()
-        else: #if self.can_any_npc_reply():
+        elif self.can_any_npc_reply():
             self.__start_generating_npc_sentences()
 
         if not self.can_any_npc_reply():
