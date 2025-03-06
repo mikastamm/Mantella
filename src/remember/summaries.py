@@ -300,8 +300,8 @@ class summaries(remembering):
                 else:
                     logging.info(f"Conversation summary not saved. Not enough dialogue spoken.")
                 break
-            except:
-                logging.error('Failed to summarize conversation. Retrying...')
+            except Exception as e:
+                logging.error(f'Failed to summarize conversation. Retrying... Error: {e}')
                 time.sleep(5)
                 continue
         return ""
@@ -342,8 +342,8 @@ class summaries(remembering):
                     )
                     long_conversation_summary = self.summarize_conversation(conversation_summaries, prompt)
                     break
-                except:
-                    logging.error('Failed to summarize conversation. Retrying...')
+                except Exception as e:
+                    logging.error(f'Failed to summarize conversation. Retrying... Error: {e}')
                     time.sleep(5)
                     continue
 
