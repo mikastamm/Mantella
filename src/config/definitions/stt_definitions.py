@@ -79,7 +79,7 @@ class STTDefinitions:
                         See here for a comparison of languages and their Whisper performance: 
                         https://github.com/openai/whisper#available-models-and-languages"""
         options = ["tiny", "tiny.en", 
-                   "base", "base.en", "Numbat/faster-skyrim-whisper-base.en"
+                   "base", "base.en", "Numbat/faster-skyrim-whisper-base.en",
                    "small", "small.en", "distil-small.en", 
                    "medium", "medium.en", "distil-medium.en", 
                    "large-v1", "large-v2", "large-v3", "distil-large-v2", "distil-large-v3", 
