@@ -2,7 +2,7 @@ import logging
 from typing import Any, Hashable
 import regex
 from src.llm.summary_client import SummaryLLMCLient
-from src.action_manager import ActionManager
+from src.actions.action_manager import ActionManager
 from src.config.definitions.llm_definitions import NarrationHandlingEnum
 from src.games.equipment import Equipment, EquipmentItem
 from src.games.external_character_info import external_character_info

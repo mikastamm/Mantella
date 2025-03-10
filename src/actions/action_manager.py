@@ -1,12 +1,14 @@
 import json
 from typing import Callable
+from src.actions.action_accessor import ActionAccessor
 from src.conversation.conversation_type import conversation_type, pc_to_npc, multi_npc, radiant
 from src.config.config_loader import ConfigLoader
 from src.conversation.action import action
-from src.utils import utils
+from src import utils
 
 
-class ActionManager:
+
+class ActionManager(ActionAccessor):
     
     def __init__(self, config:ConfigLoader, get_conversation_type: Callable[[], conversation_type]):
         self.get_conversation_type: Callable[[], conversation_type] = get_conversation_type

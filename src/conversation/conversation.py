@@ -3,7 +3,7 @@ import logging
 from threading import Thread, Lock
 import time
 from typing import Any
-from action_manager import ActionManager
+from src.actions.action_manager import ActionManager
 from src.llm.ai_client import AIClient
 from src.llm.sentence_content import SentenceTypeEnum, sentence_content
 from src.characters_manager import Characters
