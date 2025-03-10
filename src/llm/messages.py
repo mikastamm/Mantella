@@ -86,7 +86,7 @@ class system_message(message):
     def get_formatted_content(self) -> str:
         return self.text.format(
             # Actions need to be reavaluated on each exchange
-            actions = self.__action_manager.GetAvailableActions()
+            actions = self.__action_accessor.GetAvailableActions()
         )
 
     def get_openai_message(self) -> ChatCompletionMessageParam:

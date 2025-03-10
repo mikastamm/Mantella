@@ -220,6 +220,10 @@ class GameStateManager:
                     custom_context_values = json[comm_consts.KEY_CONTEXT][comm_consts.KEY_CONTEXT_CUSTOMVALUES]
             self.__talk.update_context(location, time, ingame_events, weather, custom_context_values)
     
+    
+    def get_action_manager(self) -> ActionManager:
+        return self.__action_manager
+    
     @utils.time_it
     def load_character(self, json: dict[str, Any]) -> Character | None:
         try:
