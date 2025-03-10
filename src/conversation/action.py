@@ -1,6 +1,6 @@
 class action:
     def __init__(self, identifier: str, name: str, keyword: str, description: str, prompt_text: str, 
-                 is_interrupting: bool, one_on_one: bool, multi_npc: bool, radiant: bool, info_text: str, enabled:bool, filename:str) -> None:
+                 is_interrupting: bool, one_on_one: bool, multi_npc: bool, radiant: bool, is_player_triggerable:bool, info_text: str, action_set:str) -> None:
         self.__identifier = identifier
         self.__name = name
         self.__keyword = keyword
@@ -11,13 +11,21 @@ class action:
         self.__multi_npc = multi_npc
         self.__radiant = radiant
         self.__info_text = info_text
-        self.__filename = filename
-        self.__enabled = enabled
+        self.__action_set = action_set
+        self.__is_player_triggerable = is_player_triggerable
         
+    @property
+    def is_player_triggerable(self) -> bool:
+        return self.__is_player_triggerable
+        
+    @property
+    def action_set(self) -> str:
+        return self.__action_set
+    
     @property
     def filename(self) -> str:
         return self.__filename
-        
+    
     @property
     def enabled(self) -> bool:
         return self.__enabled
@@ -25,7 +33,7 @@ class action:
     @enabled.setter
     def enabled(self, value: bool):
         self.__enabled = value
-
+    
     @property
     def identifier(self) -> str:
         return self.__identifier

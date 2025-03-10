@@ -345,9 +345,6 @@ LLM parameter list must follow the Python dictionary format: https://www.w3schoo
             logging.error('Parameter missing/invalid in config.ini file!')
             raise e
     
-    def get_action_file_path(self, action: action) -> str:
-        return os.path.join(self.__path_to_actions, f"{action.filename}")
-        
     def load_actions_from_json(self, actions_folder: str) -> list[action]:
         result = []
         os.makedirs(actions_folder, exist_ok=True)
@@ -373,8 +370,9 @@ LLM parameter list must follow the Python dictionary format: https://www.w3schoo
                             multi_npc: bool = bool(content.get("multi-npc", ""))
                             radiant: bool = bool(content.get("radiant", ""))
                             info_text: str = content.get("info-text", "")
-                            enabled: bool = bool(content.get("enabled", True))
-                            result.append(action(identifier, name, key,description,prompt,is_interrupting, one_on_one,multi_npc,radiant,info_text, enabled, file))
+                            is_player_triggerable: bool = bool(content.get("is-player-triggerable", ""))
+                            
+                            result.append(action(identifier, name, key,description,prompt,is_interrupting, one_on_one,multi_npc,radiant, is_player_triggerable,info_text))
             except Exception as e:
                 utils.play_error_sound()
                 logging.log(logging.WARNING, f"Could not load action definition file '{file}' in '{actions_folder}'. Most likely there is an error in the formating of the file. Error: {e}")
