@@ -1,6 +1,6 @@
 class action:
     def __init__(self, identifier: str, name: str, keyword: str, description: str, prompt_text: str, 
-                 is_interrupting: bool, one_on_one: bool, multi_npc: bool, radiant: bool, info_text: str) -> None:
+                 is_interrupting: bool, one_on_one: bool, multi_npc: bool, radiant: bool, info_text: str, enabled:bool, filename:str) -> None:
         self.__identifier = identifier
         self.__name = name
         self.__keyword = keyword
@@ -11,6 +11,20 @@ class action:
         self.__multi_npc = multi_npc
         self.__radiant = radiant
         self.__info_text = info_text
+        self.__filename = filename
+        self.__enabled = enabled
+        
+    @property
+    def filename(self) -> str:
+        return self.__filename
+        
+    @property
+    def enabled(self) -> bool:
+        return self.__enabled
+    
+    @enabled.setter
+    def enabled(self, value: bool):
+        self.__enabled = value
 
     @property
     def identifier(self) -> str:

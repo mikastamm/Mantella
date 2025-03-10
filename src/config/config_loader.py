@@ -20,8 +20,8 @@ class ConfigLoader:
         self.__has_any_value_changed: bool = False        
         self.__is_initial_load: bool = True
         self.__file_name = os.path.join(mygame_folder_path, file_name)
-        path_to_actions = os.path.join(utils.resolve_path(),"data","actions")
-        self.__actions = self.load_actions_from_json(path_to_actions)
+        self.__path_to_actions = os.path.join(utils.resolve_path(),"data","actions")
+        self.__actions = self.load_actions_from_json(self.__path_to_actions)
         self.__definitions: ConfigValues = MantellaConfigValueDefinitionsNew.get_config_values(self.is_run_integrated, self.__actions, self.__on_config_value_change)
         if not os.path.exists(self.__file_name):
             logging.log(24,"Cannot find 'config.ini'. Assuming first time usage of MantellaSoftware and creating it.")
@@ -348,6 +348,9 @@ LLM parameter list must follow the Python dictionary format: https://www.w3schoo
             logging.error('Parameter missing/invalid in config.ini file!')
             raise e
     
+    def get_action_file_path(self, action: action) -> str:
+        return os.path.join(self.__path_to_actions, f"{action.filename}")
+        
     def load_actions_from_json(self, actions_folder: str) -> list[action]:
         result = []
         os.makedirs(actions_folder, exist_ok=True)
@@ -373,7 +376,8 @@ LLM parameter list must follow the Python dictionary format: https://www.w3schoo
                             multi_npc: bool = bool(content.get("multi-npc", ""))
                             radiant: bool = bool(content.get("radiant", ""))
                             info_text: str = content.get("info-text", "")
-                            result.append(action(identifier, name, key,description,prompt,is_interrupting, one_on_one,multi_npc,radiant,info_text))
+                            enabled: bool = bool(content.get("enabled", True))
+                            result.append(action(identifier, name, key,description,prompt,is_interrupting, one_on_one,multi_npc,radiant,info_text, enabled, file))
             except Exception as e:
                 utils.play_error_sound()
                 logging.log(logging.WARNING, f"Could not load action definition file '{file}' in '{actions_folder}'. Most likely there is an error in the formating of the file. Error: {e}")

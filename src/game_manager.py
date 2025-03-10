@@ -2,6 +2,7 @@ import logging
 from typing import Any, Hashable
 import regex
 from src.llm.summary_client import SummaryLLMCLient
+from src.action_manager import ActionManager
 from src.config.definitions.llm_definitions import NarrationHandlingEnum
 from src.games.equipment import Equipment, EquipmentItem
 from src.games.external_character_info import external_character_info
@@ -47,6 +48,7 @@ class GameStateManager:
         self.__first_line: bool = True
         self.__automatic_greeting: bool = config.automatic_greeting
         self.__conv_has_narrator: bool = config.narration_handling == NarrationHandlingEnum.USE_NARRATOR
+        self.__action_manager: ActionManager = ActionManager(config)    
 
     ###### react to calls from the game #######
     @utils.time_it
@@ -132,6 +134,8 @@ class GameStateManager:
         npcs_in_conversation = self.__talk.context.npcs_in_conversation
         if not npcs_in_conversation.contains_multiple_npcs(): # actions are only enabled in 1-1 conversations
             for action in self.__config.actions:
+                if not action.enabled:
+                    continue
                 # if the player response is just the name of an action, force the action to trigger
                 if action.keyword.lower() == cleaned_player_text.lower() and npcs_in_conversation.last_added_character:
                     return {comm_consts.KEY_REPLYTYPE: comm_consts.KEY_REPLYTYPE_NPCACTION,
