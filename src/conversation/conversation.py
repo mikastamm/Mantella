@@ -3,6 +3,7 @@ import logging
 from threading import Thread, Lock
 import time
 from typing import Any
+from action_manager import ActionManager
 from src.llm.ai_client import AIClient
 from src.llm.sentence_content import SentenceTypeEnum, sentence_content
 from src.characters_manager import Characters
@@ -57,6 +58,8 @@ class conversation:
         self.last_sentence_audio_length = 0
         self.last_sentence_start_time = time.time()
         self.__end_conversation_keywords = utils.parse_keywords(context_for_conversation.config.end_conversation_keyword)
+        self.action_manager: ActionManager = ActionManager(context.config, lambda: self.__conversation_type)    
+        
 
     @property
     def has_already_ended(self) -> bool:

@@ -47,8 +47,8 @@ class GameStateManager:
         self.__stt: Transcriber | None = None
         self.__first_line: bool = True
         self.__automatic_greeting: bool = config.automatic_greeting
+        self.__action_manager: ActionManager = ActionManager(config)
         self.__conv_has_narrator: bool = config.narration_handling == NarrationHandlingEnum.USE_NARRATOR
-        self.__action_manager: ActionManager = ActionManager(config)    
 
     ###### react to calls from the game #######
     @utils.time_it
@@ -68,7 +68,7 @@ class GameStateManager:
                 if input_json[comm_consts.KEY_INPUTTYPE] == comm_consts.KEY_INPUTTYPE_PTT:
                     self.__mic_ptt = True
                 
-        context_for_conversation = context(world_id, self.__config, self.__client, self.__rememberer, self.__language_info)
+        context_for_conversation = context(world_id, self.__config, self.__client, self.__rememberer, self.__language_info, self.__action_manager)
         self.__talk = conversation(context_for_conversation, self.__chat_manager, self.__rememberer, self.__client, self.__stt, self.__mic_input, self.__mic_ptt)
         self.__update_context(input_json)
         self.__try_preload_voice_model()
@@ -133,8 +133,8 @@ class GameStateManager:
         cleaned_player_text = utils.clean_text(updated_player_text)
         npcs_in_conversation = self.__talk.context.npcs_in_conversation
         if not npcs_in_conversation.contains_multiple_npcs(): # actions are only enabled in 1-1 conversations
-            for action in self.__config.actions:
-                if not action.enabled:
+            for action in self.__talk.action_manager.GetAvailableActions():
+                if not action.is_player_triggerable:
                     continue
                 # if the player response is just the name of an action, force the action to trigger
                 if action.keyword.lower() == cleaned_player_text.lower() and npcs_in_conversation.last_added_character:

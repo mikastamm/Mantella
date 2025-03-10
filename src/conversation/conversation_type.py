@@ -69,8 +69,7 @@ class pc_to_npc(conversation_type):
 
     @utils.time_it
     def generate_prompt(self, context_for_conversation: context) -> str:
-        actions = [a for a in self._config.actions if a.use_in_on_on_one and a.enabled]
-        return context_for_conversation.generate_system_message(self._config.prompt, actions)
+        return context_for_conversation.generate_system_message(self._config.prompt)
     
     @utils.time_it
     def adjust_existing_message_thread(self, prompt: str, message_thread_to_adjust: message_thread):
@@ -97,8 +96,7 @@ class multi_npc(conversation_type):
 
     @utils.time_it
     def generate_prompt(self, context_for_conversation: context) -> str:
-        actions = [a for a in self._config.actions if a.use_in_multi_npc and a.enabled] 
-        return context_for_conversation.generate_system_message(self._config.multi_npc_prompt, actions)
+        return context_for_conversation.generate_system_message(self._config.multi_npc_prompt)
     
     @utils.time_it
     def adjust_existing_message_thread(self, prompt: str, message_thread_to_adjust: message_thread):
@@ -113,8 +111,7 @@ class radiant(conversation_type):
 
     @utils.time_it
     def generate_prompt(self, context_for_conversation: context) -> str:
-        actions = [a for a in self._config.actions if a.use_in_radiant and a.enabled]
-        return context_for_conversation.generate_system_message(self._config.radiant_prompt, actions)
+        return context_for_conversation.generate_system_message(self._config.radiant_prompt)
     
     @utils.time_it
     def adjust_existing_message_thread(self, prompt: str, message_thread_to_adjust: message_thread):

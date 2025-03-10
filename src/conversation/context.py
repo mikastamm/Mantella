@@ -370,23 +370,10 @@ class context:
                 equipment_descriptions.append(character.equipment.get_equipment_description(character.name))
         return " ".join(equipment_descriptions)
     
-    @utils.time_it
-    def __get_action_texts(self, actions: list[action]) -> str:
-        """Generates the prompt text for the available actions
-
-        Args:
-            actions (list[action]): the list of possible actions. Already filtered for conversation type and config choices
-
-        Returns:
-            str: the text for the {actions} variable
-        """
-        result = ""
-        for a in actions:
-            result += a.prompt_text.format(key=a.keyword) + " "
-        return result
+    
     
     @utils.time_it
-    def generate_system_message(self, prompt: str, actions_for_prompt: list[action]) -> str:
+    def generate_system_message(self, prompt: str) -> str:
         """Fills the variables in the prompt with the values calculated from the context
 
         Args:
@@ -423,7 +410,6 @@ class context:
         else:
             self.__prev_game_time = None, time_group
         conversation_summaries = self.__rememberer.get_prompt_text(self.get_characters_excluding_player(), self.__world_id)
-        actions = self.__get_action_texts(actions_for_prompt)
 
         removal_content: list[tuple[str, str]] = [(bios, conversation_summaries),(bios,""),("","")]
         have_bios_been_dropped = False
@@ -447,8 +433,7 @@ class context:
                 time_group=time_group, 
                 language=self.__language['language'], 
                 conversation_summary=content[1],
-                conversation_summaries=content[1],
-                actions = actions
+                conversation_summaries=content[1]
                 )
             if self.__client.is_too_long(result, self.TOKEN_LIMIT_PERCENT):
                 if content[0] != "":
