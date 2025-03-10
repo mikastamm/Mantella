@@ -69,7 +69,7 @@ class pc_to_npc(conversation_type):
 
     @utils.time_it
     def generate_prompt(self, context_for_conversation: context) -> str:
-        actions = [a for a in self._config.actions if a.use_in_on_on_one]
+        actions = [a for a in self._config.actions if a.use_in_on_on_one and a.enabled]
         return context_for_conversation.generate_system_message(self._config.prompt, actions)
     
     @utils.time_it
@@ -97,7 +97,7 @@ class multi_npc(conversation_type):
 
     @utils.time_it
     def generate_prompt(self, context_for_conversation: context) -> str:
-        actions = [a for a in self._config.actions if a.use_in_multi_npc]
+        actions = [a for a in self._config.actions if a.use_in_multi_npc and a.enabled] 
         return context_for_conversation.generate_system_message(self._config.multi_npc_prompt, actions)
     
     @utils.time_it
@@ -113,7 +113,7 @@ class radiant(conversation_type):
 
     @utils.time_it
     def generate_prompt(self, context_for_conversation: context) -> str:
-        actions = [a for a in self._config.actions if a.use_in_radiant]
+        actions = [a for a in self._config.actions if a.use_in_radiant and a.enabled]
         return context_for_conversation.generate_system_message(self._config.radiant_prompt, actions)
     
     @utils.time_it
