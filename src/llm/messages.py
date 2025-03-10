@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from openai.types.chat import ChatCompletionMessageParam
-from src.action_manager import ActionManager
+from src.actions.action_accessor import ActionAccessor
 from src.config.definitions.llm_definitions import NarrationIndicatorsEnum
 from src.config.config_loader import ConfigLoader
 from src.llm.sentence_content import SentenceTypeEnum, sentence_content
@@ -79,8 +79,9 @@ class system_message(message):
     """A message with the role 'system'. Usually used as the initial main prompt of an exchange with the LLM
     """
 
-    def __init__(self, prompt: str, config: ConfigLoader, actionManager:ActionManager):
+    def __init__(self, prompt: str, config: ConfigLoader, actionAccessor:ActionAccessor):
         super().__init__(prompt, config, True)
+        self.__action_accessor = actionAccessor
 
     def get_formatted_content(self) -> str:
         return self.text.format(

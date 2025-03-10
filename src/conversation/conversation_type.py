@@ -1,15 +1,18 @@
 from abc import ABC, abstractmethod
+from enum import Enum
 from src.config.config_loader import ConfigLoader
-from src.conversation.action import action
 from src.character_manager import Character
 from src.llm.message_thread import message_thread
 from src.conversation.context import context
 from src.llm.messages import user_message
 from src import utils
 
+
+
 class conversation_type(ABC):
     """Base class for different forms of conversations.
     """
+    
     def __init__(self, config: ConfigLoader) -> None:
         super().__init__()
         self._config = config

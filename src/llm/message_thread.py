@@ -1,5 +1,5 @@
 from copy import deepcopy
-from src.action_manager import ActionManager
+from src.actions.action_accessor import ActionAccessor
 from src.config.config_loader import ConfigLoader
 from src.llm.messages import message, system_message, user_message, assistant_message, image_message, image_description_message
 from typing import Callable
@@ -10,7 +10,7 @@ class message_thread():
     """A thread of messages consisting of system-, user- and assistant-messages.
     Central place for adding new messages to the thread and manipulating the existing ones
     """
-    def __init__(self, config: ConfigLoader, initial_system_message: str | system_message | None, action_manager:ActionManager) -> None:
+    def __init__(self, config: ConfigLoader, initial_system_message: str | system_message | None, action_manager:ActionAccessor) -> None:
         self.__messages: list[message] = []
         self.__config = config
         self.__action_manager = action_manager  

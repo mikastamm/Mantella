@@ -371,8 +371,9 @@ LLM parameter list must follow the Python dictionary format: https://www.w3schoo
                             radiant: bool = bool(content.get("radiant", ""))
                             info_text: str = content.get("info-text", "")
                             is_player_triggerable: bool = bool(content.get("is-player-triggerable", ""))
+                            action_set: str = content.get("action-set", "")
                             
-                            result.append(action(identifier, name, key,description,prompt,is_interrupting, one_on_one,multi_npc,radiant, is_player_triggerable,info_text))
+                            result.append(action(identifier, name, key,description,prompt,is_interrupting, one_on_one,multi_npc,radiant, is_player_triggerable,info_text, action_set))
             except Exception as e:
                 utils.play_error_sound()
                 logging.log(logging.WARNING, f"Could not load action definition file '{file}' in '{actions_folder}'. Most likely there is an error in the formating of the file. Error: {e}")
