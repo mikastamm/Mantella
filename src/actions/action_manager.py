@@ -1,5 +1,5 @@
 import json
-from typing import Callable
+from typing import Callable, Dict
 from src.actions.action_accessor import ActionAccessor
 from src.conversation.conversation_type import conversation_type, pc_to_npc, multi_npc, radiant
 from src.config.config_loader import ConfigLoader
@@ -9,6 +9,21 @@ from src import utils
 
 
 class ActionManager(ActionAccessor):
+    """ 
+    Repository for the available actions. You can define actions through json files in Data/Actions. By default actions are always available.
+    
+    You can associate actions with an action_set. This makes them disabled by default, needing you to enable them first. 
+    
+    Send KEY_REQUESTTYPE_TOGGLE_ACTION_SET to the mantella endpoint to enable / disable all actions in that action-set.  Body:
+    {
+        "action_set": str,
+        "enabled": bool
+    }
+    
+    Note: To keep the game and server in sync, action sets are always disabled at the start of the conversation. 
+    In your plugin, you have to respond to the conversation start event and decide weather to enable your action set or not.
+    """
+    
     
     def __init__(self, config:ConfigLoader, get_conversation_type: Callable[[], conversation_type]):
         self.get_conversation_type: Callable[[], conversation_type] = get_conversation_type
@@ -19,6 +34,15 @@ class ActionManager(ActionAccessor):
         
     def ResetEnabledSets(self):
         self.__enabled_sets.clear()
+    
+    def handle_toggle_action_set_request(self, json:Dict[str, any]):
+        """ Enables or disables all actions, which are tagged with the given action_set"""
+        enable:bool = json["enabled"]
+        action_set:str = json["action_set"]
+        if enable:
+            self.__enabled_sets.add(action_set)
+        else:
+            self.__enabled_sets.remove(action_set)
         
     @utils.time_it
     def GetAvailableActions(self):
@@ -35,15 +59,7 @@ class ActionManager(ActionAccessor):
         return available
     
     @utils.time_it
-    def GetAvailableActionsText(self, actions: list[action]) -> str:
-        """Generates the prompt text for the available actions
-
-        Args:
-            actions (list[action]): the list of possible actions. Already filtered for conversation type and config choices
-
-        Returns:
-            str: the text for the {actions} variable
-        """
+    def GetAvailableActionsText(self) -> str:
         result = ""
         for a in self.GetAvailableActions():
             result += a.prompt_text.format(key=a.keyword) + " "

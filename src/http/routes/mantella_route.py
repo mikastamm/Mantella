@@ -97,8 +97,8 @@ class mantella_route(routeable):
                         reply = self.__game.player_input(received_json)
                     case comm_consts.KEY_REQUESTTYPE_ENDCONVERSATION:
                         reply = self.__game.end_conversation(received_json)
-                    case comm_consts.KEY_REQUESTTYPE_MODIFY_ACTION:
-                        reply = self.__game.modify_action(received_json)
+                    case comm_consts.KEY_REQUESTTYPE_TOGGLE_ACTION_SET:
+                        reply = self.__game.get_action_manager().handle_toggle_action_set_request(received_json)
                     case _:
                         reply = self.error_message(f"Request type '{request_type}' was not recognized")
             else:
