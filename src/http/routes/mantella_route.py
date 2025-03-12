@@ -93,9 +93,9 @@ class mantella_route(routeable):
                     case comm_consts.KEY_REQUESTTYPE_STARTCONVERSATION:
                         reply = self.__game.start_conversation(received_json)
                     case comm_consts.KEY_REQUESTTYPE_CONTINUECONVERSATION:
-                        reply = self.__game.continue_conversation(received_json)
+                        reply = await self.__game.continue_conversation(received_json)
                     case comm_consts.KEY_REQUESTTYPE_PLAYERINPUT:
-                        reply = self.__game.player_input(received_json)
+                        reply = await self.__game.player_input(received_json)
                     case comm_consts.KEY_REQUESTTYPE_ENDCONVERSATION:
                         reply = self.__game.end_conversation(received_json)
                     case comm_consts.KEY_REQUESTTYPE_TOGGLE_ACTION_SET:

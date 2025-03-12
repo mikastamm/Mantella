@@ -1,10 +1,12 @@
 import logging
+
+from src.actions.action_accessor import ActionAccessor
 from src.llm.output.output_parser import output_parser, sentence_generation_settings
 from src.llm.sentence_content import sentence_content
 from src.conversation.action import action
     
 class actions_parser(output_parser):
-    def __init__(self, actions: list[action]) -> None:
+    def __init__(self, actions:ActionAccessor) -> None:
         super().__init__()
         self.__actions = actions
 
@@ -13,7 +15,7 @@ class actions_parser(output_parser):
 
     def modify_sentence_content(self, cut_content: sentence_content, last_content: sentence_content | None, settings: sentence_generation_settings) -> tuple[sentence_content | None, sentence_content | None]:
         if ":" in cut_content.text:
-            for action in self.__actions:
+            for action in self.__actions.GetAvailableActions():
                 keyword = action.keyword + ":"
                 if keyword in cut_content.text:
                     cut_content.text = cut_content.text.replace(keyword,"").strip()
