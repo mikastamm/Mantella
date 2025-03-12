@@ -84,10 +84,14 @@ class system_message(message):
         self.__action_accessor = actionAccessor
 
     def get_formatted_content(self) -> str:
-        return self.text.format(
+        if self.__action_accessor is None:
+            return self.text
+        
+        res = self.text.format(
             # Actions need to be reavaluated on each exchange
-            actions = self.__action_accessor.GetAvailableActions()
+            actions = self.__action_accessor.GetAvailableActionsText()
         )
+        return res
 
     def get_openai_message(self) -> ChatCompletionMessageParam:
         return {"role":"system", "content": self.get_formatted_content(),}

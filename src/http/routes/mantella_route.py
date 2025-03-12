@@ -3,6 +3,7 @@ import logging
 from typing import Any, Hashable
 
 from fastapi import FastAPI, Request
+from src.actions import action_manager
 from src.config.config_loader import ConfigLoader
 from src.games.fallout4 import fallout4
 from src.games.gameable import gameable
@@ -96,12 +97,14 @@ class mantella_route(routeable):
                     case comm_consts.KEY_REQUESTTYPE_ENDCONVERSATION:
                         reply = self.__game.end_conversation(received_json)
                     case comm_consts.KEY_REQUESTTYPE_TOGGLE_ACTION_SET:
-                        reply = self.__game.get_action_manager().handle_toggle_action_set_request(received_json)
+                        action_manager = self.__game.get_action_manager()
+                        if action_manager:
+                            reply = action_manager.handle_toggle_action_set_request(received_json)
                     case _:
                         reply = self.error_message(f"Request type '{request_type}' was not recognized")
             else:
                 reply = self.error_message(f"Request did not contain properly formatted json!")
-
+           
             if self._show_debug_messages:
                 logging.log(self._log_level_http_out, json.dumps(reply, indent=4))
             return reply

@@ -187,7 +187,7 @@ class summaries(remembering):
     def summarize_conversation(self, text_to_summarize: str, prompt: str, npc_name: str) -> str:
         summary = ''
         if len(text_to_summarize) > 5:
-            messages = message_thread(self.__config, prompt)
+            messages = message_thread(self.__config, prompt, None)
             messages.add_message(user_message(self.__config, text_to_summarize))
             summary = self.__client.request_call(messages)
             if not summary:

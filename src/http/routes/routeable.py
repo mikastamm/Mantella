@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import logging
 from typing import Any
 
 from fastapi import FastAPI
@@ -44,6 +45,7 @@ class routeable(ABC):
         pass
 
     def error_message(self, message: str) -> dict[str, Any]:
+        logging.error(message)
         return {
                 comm_consts.KEY_REPLYTYPE: "error",
                 "mantella_message": message

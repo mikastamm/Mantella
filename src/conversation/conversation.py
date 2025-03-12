@@ -45,7 +45,8 @@ class conversation:
             self.__conversation_type: conversation_type = radiant(context_for_conversation.config)
         else:
             self.__conversation_type: conversation_type = pc_to_npc(context_for_conversation.config)        
-        self.__messages: message_thread = message_thread(self.__context.config, None)
+        self.action_manager: ActionManager = ActionManager(context_for_conversation.config, lambda: self.__conversation_type)    
+        self.__messages: message_thread = message_thread(self.__context.config, None, self.action_manager)
         self.__output_manager: ChatManager = output_manager
         self.__rememberer: remembering = rememberer
         self.__llm_client = llm_client
@@ -58,7 +59,6 @@ class conversation:
         self.last_sentence_audio_length = 0
         self.last_sentence_start_time = time.time()
         self.__end_conversation_keywords = utils.parse_keywords(context_for_conversation.config.end_conversation_keyword)
-        self.action_manager: ActionManager = ActionManager(context.config, lambda: self.__conversation_type)    
         
 
     @property
@@ -280,7 +280,7 @@ class conversation:
 
             new_prompt = self.__conversation_type.generate_prompt(self.__context)        
             if len(self.__messages) == 0:
-                self.__messages: message_thread = message_thread(self.__context.config, new_prompt)
+                self.__messages: message_thread = message_thread(self.__context.config, new_prompt, self.action_manager)
             else:
                 self.__conversation_type.adjust_existing_message_thread(new_prompt, self.__messages)
                 self.__messages.reload_message_thread(new_prompt, self.__llm_client.is_too_long, self.TOKEN_LIMIT_RELOAD_MESSAGES)

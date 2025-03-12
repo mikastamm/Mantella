@@ -45,7 +45,6 @@ class GameStateManager:
         self.__stt: Transcriber | None = None
         self.__first_line: bool = True
         self.__automatic_greeting: bool = config.automatic_greeting
-        self.__action_manager: ActionManager = ActionManager(config)
         self.__conv_has_narrator: bool = config.narration_handling == NarrationHandlingEnum.USE_NARRATOR
 
     ###### react to calls from the game #######
@@ -66,7 +65,7 @@ class GameStateManager:
                 if input_json[comm_consts.KEY_INPUTTYPE] == comm_consts.KEY_INPUTTYPE_PTT:
                     self.__mic_ptt = True
                 
-        context_for_conversation = context(world_id, self.__config, self.__client, self.__rememberer, self.__language_info, self.__action_manager)
+        context_for_conversation = context(world_id, self.__config, self.__client, self.__rememberer, self.__language_info)
         self.__talk = conversation(context_for_conversation, self.__chat_manager, self.__rememberer, self.__client, self.__stt, self.__mic_input, self.__mic_ptt)
         self.__update_context(input_json)
         self.__try_preload_voice_model()
@@ -222,7 +221,9 @@ class GameStateManager:
     
     
     def get_action_manager(self) -> ActionManager:
-        return self.__action_manager
+        if not self.__talk:
+            return None
+        return self.__talk.action_manager
     
     @utils.time_it
     def load_character(self, json: dict[str, Any]) -> Character | None:

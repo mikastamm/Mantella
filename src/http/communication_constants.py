@@ -9,6 +9,7 @@ class communication_constants:
     KEY_REQUESTTYPE_CONTINUECONVERSATION: str = PREFIX + "continue_conversation"
     KEY_REQUESTTYPE_PLAYERINPUT: str = PREFIX + "player_input"
     KEY_REQUESTTYPE_ENDCONVERSATION: str = PREFIX + "end_conversation"
+    KEY_REQUESTTYPE_TOGGLE_ACTION_SET: str = PREFIX + "toggle_action_set"
 
     KEY_REPLYTTYPE_INITCOMPLETED: str = PREFIX + "init_completed"
     KEY_REPLYTTYPE_STARTCONVERSATIONCOMPLETED: str = PREFIX + "start_conversation_completed"
@@ -73,7 +74,7 @@ class communication_constants:
     ACTION_ENDCONVERSATION: str = PREFIX + "end_conversation"
     ACTION_REMOVECHARACTER: str = PREFIX + "remove_character"
 
-    ACTION_NPC_OFFENDED: str = PREFIX + "npc_offended"
-    ACTION_NPC_FORGIVEN: str = PREFIX + "npc_forgiven"
-    ACTION_NPC_FOLLOW: str = PREFIX + "npc_follow"
-    ACTION_NPC_INVENTORY: str = PREFIX + "npc_inventory"
+    KEY_REPLYTYPE_TOGGLE_ACTION_SET: str = PREFIX + "toggle_action_set_completed"
+    KEY_ACTION_SET_ID = PREFIX + "action_set_id"
+    KEY_ACTION_SET_ENABLED = PREFIX + "action_set_enabled"
+    
