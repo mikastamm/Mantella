@@ -174,7 +174,7 @@ class summaries(remembering):
                 # We also store the message for the npc if they are in the conversation for it
                 if in_conversation:
                     if npc_name not in npc_messageThreads:
-                        npc_messageThreads[npc_name] = message_thread(self.__config, None)
+                        npc_messageThreads[npc_name] = message_thread(self.__config, None, None)
                     thread: message_thread = npc_messageThreads[npc_name]
                     
                     # Mark passage of time, in case a character left and rejoined the conversation
@@ -363,7 +363,7 @@ class summaries(remembering):
     def summarize_conversation(self, text_to_summarize: str, prompt: str) -> str:
         summary = ''
         if len(text_to_summarize) > 5:
-            messages = message_thread(self.__config, prompt)
+            messages = message_thread(self.__config, prompt, None)
             messages.add_message(user_message(self.__config, text_to_summarize))
             summary = self.__client.request_call(messages)
             if not summary:

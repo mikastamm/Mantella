@@ -1,3 +1,4 @@
+from calendar import c
 import json
 from typing import Callable, Dict
 from src.actions.action_accessor import ActionAccessor
@@ -5,6 +6,7 @@ from src.conversation.conversation_type import conversation_type, pc_to_npc, mul
 from src.config.config_loader import ConfigLoader
 from src.conversation.action import action
 from src import utils
+from src.http.communication_constants import communication_constants
 
 
 
@@ -37,17 +39,18 @@ class ActionManager(ActionAccessor):
     
     def handle_toggle_action_set_request(self, json:Dict[str, any]):
         """ Enables or disables all actions, which are tagged with the given action_set"""
-        enable:bool = json["enabled"]
-        action_set:str = json["action_set"]
-        if enable:
-            self.__enabled_sets.add(action_set)
+        enable:bool = json[communication_constants.KEY_ACTION_SET_ENABLED]
+        action_set:str = json[communication_constants.KEY_ACTION_SET_ID]
+        if enable and action_set:
+            self.__enabled_sets.add(action_set.lower())
         else:
-            self.__enabled_sets.remove(action_set)
+            self.__enabled_sets.remove(action_set.lower())
+        return  {communication_constants.KEY_REPLYTYPE: communication_constants.KEY_REPLYTYPE_TOGGLE_ACTION_SET}
         
     @utils.time_it
     def GetAvailableActions(self):
         conversation_type = self.get_conversation_type()
-        toggledActions = [a for a in self.__config.actions if a.action_set == "" or a.action_set in self.__enabled_sets] 
+        toggledActions = [a for a in self.__config.actions if a.action_set == "" or a.action_set.lower() in self.__enabled_sets] 
         available = []
         for a in toggledActions:
             if a.use_in_multi_npc and isinstance(conversation_type, multi_npc):

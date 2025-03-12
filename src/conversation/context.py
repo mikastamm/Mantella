@@ -416,6 +416,11 @@ class context:
         have_summaries_been_dropped = False
         logging.log(23, f'Maximum size of prompt is {self.__client.token_limit} x {self.TOKEN_LIMIT_PERCENT} = {int(round(self.__client.token_limit * self.TOKEN_LIMIT_PERCENT, 0))} tokens.')
         for content in removal_content:
+            formatLater = ["actions"]
+            
+            for variable in formatLater:
+                prompt = prompt.replace("{" + variable + "}", "[[[" + variable + "]]]")
+                
             result = prompt.format(
                 player_name = player_name,
                 player_description = player_description,
@@ -435,6 +440,11 @@ class context:
                 conversation_summary=content[1],
                 conversation_summaries=content[1]
                 )
+            
+            # Variables that need to be updated more frequently need to be preserved as placeholders
+            for variable in formatLater:
+                result = result.replace("[[[" + variable + "]]]", "{" + variable + "}")
+                
             if self.__client.is_too_long(result, self.TOKEN_LIMIT_PERCENT):
                 if content[0] != "":
                     have_summaries_been_dropped = True
