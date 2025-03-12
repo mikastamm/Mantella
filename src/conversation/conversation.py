@@ -372,7 +372,7 @@ class conversation:
         with self.__generation_start_lock:
             if not self.__generation_thread:
                 self.__sentences.is_more_to_come = True
-                self.__generation_thread = Thread(None, self.__output_manager.generate_response, None, [self.__messages, self.__context.npcs_in_conversation, self.__sentences, self.context.config.actions]).start()   
+                self.__generation_thread = Thread(None, self.__output_manager.generate_response, None, [self.__messages, self.__context.npcs_in_conversation, self.__sentences, self.action_manager]).start()   
 
     @utils.time_it
     def __stop_generation(self):

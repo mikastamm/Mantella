@@ -65,7 +65,7 @@ class ActionManager(ActionAccessor):
     def GetAvailableActionsText(self) -> str:
         result = ""
         for a in self.GetAvailableActions():
-            result += a.prompt_text.format(key=a.keyword) + " "
+            result += a.prompt_text.format(key=a.keyword) + " \n"
         return result
             
     def get_action(self, action_id:str)->action:

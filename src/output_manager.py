@@ -5,6 +5,8 @@ import logging
 import time
 import unicodedata
 from openai import APIConnectionError
+
+from src.actions.action_accessor import ActionAccessor
 from src.config.definitions.llm_definitions import NarrationHandlingEnum
 from src.llm.output.max_count_sentences_parser import max_count_sentences_parser
 from src.llm.output.sentence_length_parser import sentence_length_parser
@@ -84,7 +86,7 @@ class ChatManager:
             return mantella_sentence(sentence_content(character_to_talk, text, content.sentence_type, content.is_system_generated_sentence, content.actions), audio_file, self.get_audio_duration(audio_file))
 
     @utils.time_it
-    def generate_response(self, messages: message_thread, characters: Characters, blocking_queue: sentence_queue, actions: list[action]):
+    def generate_response(self, messages: message_thread, characters: Characters, blocking_queue: sentence_queue, actions: ActionAccessor):
         """Starts generating responses by the LLM for the current state of the input messages
 
         Args:
@@ -122,7 +124,7 @@ class ChatManager:
         return duration
  
     @utils.time_it
-    async def process_response(self, active_character: Character, blocking_queue: sentence_queue, messages : message_thread, characters: Characters, actions: list[action]):
+    async def process_response(self, active_character: Character, blocking_queue: sentence_queue, messages : message_thread, characters: Characters, actions: ActionAccessor):
         """Stream response from LLM one sentence at a time"""
 
         raw_response: str = ''  # Track the raw response
