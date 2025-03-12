@@ -1,3 +1,4 @@
+import asyncio
 import sys
 import numpy as np
 from faster_whisper import WhisperModel
@@ -480,6 +481,29 @@ If you would prefer to run speech-to-text locally, please ensure the `Speech-to-
 
             time.sleep(0.1)
 
+    @utils.time_it
+    async def get_latest_transcription_async(self) -> str:
+        """Get the latest transcription, non-blocking until speech ends."""
+        while True:
+            await self._transcription_ready.wait()
+            async with self._lock:
+                transcription = self._current_transcription
+                self._current_transcription = ''
+                if transcription:
+                    self._transcription_ready.clear()
+                    self._speech_detected = False
+                    logging.log(self.loglevel, f"Player said '{transcription.strip()}'")
+                    return transcription
+
+            if self.play_cough_sound:
+                await asyncio.to_thread(utils.play_no_mic_input_detected_sound)
+            logging.warning('Could not detect speech from mic input')
+
+            self._transcription_ready.clear()
+            self._speech_detected = False
+            self._current_transcription = ''
+
+            await asyncio.sleep(0.1)
 
     def stop_listening(self) -> None:
         """Stop listening for speech."""

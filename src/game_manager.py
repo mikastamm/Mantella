@@ -79,7 +79,7 @@ class GameStateManager:
         
     
     @utils.time_it
-    def continue_conversation(self, input_json: dict[str, Any]) -> dict[str, Any]:
+    async def continue_conversation(self, input_json: dict[str, Any]) -> dict[str, Any]:
         if(not self.__talk ):
             return self.error_message("No running conversation.")
         
@@ -96,7 +96,7 @@ class GameStateManager:
             replyType, sentence_to_play = self.__talk.continue_conversation()
             if replyType == comm_consts.KEY_REQUESTTYPE_TTS:
                 # if player input is detected mid-response, immediately process the player input
-                reply = self.player_input({"mantella_context": {}, "mantella_player_input": "", "mantella_request_type": "mantella_player_input"})
+                reply = await self.player_input({"mantella_context": {}, "mantella_player_input": "", "mantella_request_type": "mantella_player_input"})
                 self.__first_line = False # since the NPC is already speaking in-game, setting this to True would just cause two voicelines to play at once
                 continue # continue conversation with new player input (ie call self.__talk.continue_conversation() again)
             else:
@@ -114,7 +114,7 @@ class GameStateManager:
         return reply
 
     @utils.time_it
-    def player_input(self, input_json: dict[str, Any]) -> dict[str, Any]:
+    async def player_input(self, input_json: dict[str, Any]) -> dict[str, Any]:
         if(not self.__talk ):
             return self.error_message("No running conversation.")
         
@@ -122,7 +122,7 @@ class GameStateManager:
         
         player_text: str = input_json.get(comm_consts.KEY_REQUESTTYPE_PLAYERINPUT, '')
         self.__update_context(input_json)
-        updated_player_text, update_events, player_spoken_sentence = self.__talk.process_player_input(player_text)
+        updated_player_text, update_events, player_spoken_sentence = await self.__talk.process_player_input(player_text)
         if update_events:
             return {comm_consts.KEY_REPLYTYPE: comm_consts.KEY_REQUESTTYPE_TTS, comm_consts.KEY_TRANSCRIBE: updated_player_text}
         canReply =  self.__talk.can_any_npc_reply()

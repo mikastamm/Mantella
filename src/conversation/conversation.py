@@ -185,7 +185,7 @@ class conversation:
                     return comm_consts.KEY_REPLYTYPE_PLAYERTALK, None
 
     @utils.time_it
-    def process_player_input(self, player_text: str) -> tuple[str, bool, sentence|None]:
+    async def process_player_input(self, player_text: str) -> tuple[str, bool, sentence|None]:
         """Submit the input of the player to the conversation
 
         Args:
@@ -213,7 +213,7 @@ class conversation:
                 # Start tracking how long it has taken to receive a player response
                 input_wait_start_time = time.time()
                 while not player_text:
-                    player_text = self.__stt.get_latest_transcription()
+                    player_text = await self.__stt.get_latest_transcription_async()
                 if time.time() - input_wait_start_time >= self.__events_refresh_time:
                     # If too much time has passed, in-game events need to be updated
                     events_need_updating = True
