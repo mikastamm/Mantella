@@ -4,6 +4,7 @@ from threading import Thread, Lock
 import time
 from typing import Any
 from src.actions.action_manager import ActionManager
+from src.conversation.notification_manager import notification_manager
 from src.llm.ai_client import AIClient
 from src.llm.sentence_content import SentenceTypeEnum, sentence_content
 from src.characters_manager import Characters
@@ -59,6 +60,7 @@ class conversation:
         self.last_sentence_audio_length = 0
         self.last_sentence_start_time = time.time()
         self.__end_conversation_keywords = utils.parse_keywords(context_for_conversation.config.end_conversation_keyword)
+        self.__notification_manager = notification_manager(lambda: self.__messages)
         
 
     @property
@@ -477,3 +479,7 @@ class conversation:
         if game_value == None:
             return self.__context.config.voice_player_input
         return game_value
+    
+    @utils.time_it  
+    def get_notification_manager(self) -> notification_manager:
+        return self.__notification_manager

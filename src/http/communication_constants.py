@@ -11,6 +11,7 @@ class communication_constants:
     KEY_REQUESTTYPE_ENDCONVERSATION: str = PREFIX + "end_conversation"
     KEY_REQUESTTYPE_TOGGLE_ACTION_SET: str = PREFIX + "toggle_action_set"
 
+
     KEY_REPLYTTYPE_INITCOMPLETED: str = PREFIX + "init_completed"
     KEY_REPLYTTYPE_STARTCONVERSATIONCOMPLETED: str = PREFIX + "start_conversation_completed"
 
@@ -77,4 +78,13 @@ class communication_constants:
     KEY_REPLYTYPE_TOGGLE_ACTION_SET: str = PREFIX + "toggle_action_set_completed"
     KEY_ACTION_SET_ID = PREFIX + "action_set_id"
     KEY_ACTION_SET_ENABLED = PREFIX + "action_set_enabled"
+    
+    # Notifications
+    KEY_REQUESTTYPE_ADD_NOTIFICATION: str = PREFIX + "set_notification" 
+
+    KEY_NOTIFICATION_SOURCE: str = PREFIX + "notification_source"
+    KEY_NOTIFICATION_ID: str = PREFIX + "notification_id"
+    KEY_NOTIFICATION_MESSAGE: str = PREFIX + "notification_message"
+
+    KEY_REPLYTYPE_ADD_NOTIFICATION: str = PREFIX + "add_notification_completed"
     

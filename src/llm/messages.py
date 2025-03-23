@@ -3,6 +3,7 @@ from openai.types.chat import ChatCompletionMessageParam
 from src.actions.action_accessor import ActionAccessor
 from src.config.definitions.llm_definitions import NarrationIndicatorsEnum
 from src.config.config_loader import ConfigLoader
+from src.conversation.notification import Notification
 from src.llm.sentence_content import SentenceTypeEnum, sentence_content
 from src.character_manager import Character
 
@@ -247,4 +248,30 @@ class image_description_message(message):
                     "text": f"This is description of the scene is only to give context to the conversation and is from the point of view of the player: {self.text_content}"
                 }
             ]
+        }
+
+
+class notification_message(message):
+    """A message giving in-game context to the llm (similiar to events, but explicitely in the messagethread)
+    """
+    def __init__(self, config: ConfigLoader, notification: Notification):
+        super().__init__(notification.text, config, False)
+        self.notification =  notification
+
+    def get_formatted_content(self):
+        return self.notification.text
+
+    def get_dict_formatted_string(self):
+        dictionary = {"role":"system", "content": self.get_formatted_content()}
+        return f"{dictionary}"
+
+    def get_openai_message(self):
+        # Implement the method to return the appropriate format for OpenAI API
+        return {
+            "role": "system",
+            "content":
+            {
+                "type": "text",
+                "text": self.notification
+            }
         }

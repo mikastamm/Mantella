@@ -169,7 +169,15 @@ class message_thread():
                 # Move the new message to the end of the list
                 self.__messages.append(self.__messages.pop(idx))
                 break
-            
+    
+    def remove_message(self, message_instance: message):
+        """Removes the specified message from the messages.
+
+        Args:
+            message_instance (message): The message to remove.
+        """
+        self.__messages = [msg for msg in self.__messages if msg != message_instance]
+
     def delete_all_message_type(self, message_type: type):
         """Deletes all messages of the specified type from the messages.
 

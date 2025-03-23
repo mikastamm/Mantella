@@ -3,6 +3,7 @@ from typing import Any, Hashable
 import regex
 from src.actions.action_manager import ActionManager
 from src.config.definitions.llm_definitions import NarrationHandlingEnum
+from src.conversation.notification_manager import notification_manager
 from src.games.equipment import Equipment, EquipmentItem
 from src.games.external_character_info import external_character_info
 from src.games.gameable import gameable
@@ -225,6 +226,8 @@ class GameStateManager:
             return None
         return self.__talk.action_manager
     
+
+    
     @utils.time_it
     def load_character(self, json: dict[str, Any]) -> Character | None:
         try:
@@ -360,3 +363,9 @@ class GameStateManager:
                 )
             else:
                 return self.error_message("Could not load initial character to talk to. Please try again.")
+            
+    @utils.time_it
+    def get_notification_manager(self) -> notification_manager | None:
+        if not self.__talk:
+            return None
+        return self.__talk.get_notification_manager()

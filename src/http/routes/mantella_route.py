@@ -5,6 +5,8 @@ from typing import Any, Hashable
 from fastapi import FastAPI, Request
 from src.actions import action_manager
 from src.config.config_loader import ConfigLoader
+from src.conversation import notification_manager
+from src.conversation.notification import Notification
 from src.games.fallout4 import fallout4
 from src.games.gameable import gameable
 from src.games.skyrim import skyrim
@@ -100,6 +102,10 @@ class mantella_route(routeable):
                         action_manager = self.__game.get_action_manager()
                         if action_manager:
                             reply = action_manager.handle_toggle_action_set_request(received_json)
+                    case comm_consts.KEY_REQUESTTYPE_ADD_NOTIFICATION:
+                        notification_manager = self.__game.get_notification_manager()
+                        if notification_manager:
+                            reply = notification_manager.set_notification(Notification.from_json(received_json))    
                     case _:
                         reply = self.error_message(f"Request type '{request_type}' was not recognized")
             else:
