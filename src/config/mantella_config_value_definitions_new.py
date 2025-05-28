@@ -1,5 +1,5 @@
 from typing import Any, Callable
-from src.conversation.action import action
+from src.conversation.action import Action
 from src.config.config_values import ConfigValues
 from src.config.types.config_value_bool import ConfigValueBool
 from src.config.types.config_value import ConfigValue
@@ -18,7 +18,7 @@ import sys
 
 class MantellaConfigValueDefinitionsNew:
     @staticmethod
-    def get_config_values(is_integrated: bool, actions: list[action], on_value_change_callback: Callable[..., Any] | None = None) -> ConfigValues:
+    def get_config_values(is_integrated: bool, actions: list[Action], on_value_change_callback: Callable[..., Any] | None = None) -> ConfigValues:
         result: ConfigValues = ConfigValues()
         is_integrated = "--integrated" in sys.argv
         # hidden_category= ConfigValueGroup("Hidden", "Hidden", "Don't show these on the UI", on_value_change_callback, is_hidden=True)
@@ -40,8 +40,9 @@ class MantellaConfigValueDefinitionsNew:
         llm_category.add_config_value(LLMDefinitions.get_llm_api_config_value())
         llm_category.add_config_value(LLMDefinitions.get_model_config_value())
         # llm_category.add_config_value(LLMDefinitions.get_llm_priority_config_value())
+        llm_category.add_config_value(LLMDefinitions.get_max_response_sentences_single_config_value())
+        llm_category.add_config_value(LLMDefinitions.get_max_response_sentences_multi_config_value())
         llm_category.add_config_value(LLMDefinitions.get_custom_token_count_config_value())
-        llm_category.add_config_value(LLMDefinitions.get_max_response_sentences_config_value())
         #llm_category.add_config_value(LLMDefinitions.get_llm_custom_service_url_config_value())
         llm_category.add_config_value(LLMDefinitions.get_wait_time_buffer_config_value())
         # llm_category.add_config_value(LLMDefinitions.get_try_filter_narration())

@@ -1,4 +1,4 @@
-class action:
+class Action:
     def __init__(self, identifier: str, name: str, keyword: str, description: str, prompt_text: str, 
                  is_interrupting: bool, one_on_one: bool, multi_npc: bool, radiant: bool, is_player_triggerable:bool, info_text: str, action_set:str) -> None:
         self.__identifier = identifier

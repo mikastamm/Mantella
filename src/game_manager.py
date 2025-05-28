@@ -7,8 +7,7 @@ from src.conversation.notification_manager import notification_manager
 from src.games.equipment import Equipment, EquipmentItem
 from src.games.external_character_info import external_character_info
 from src.games.gameable import gameable
-from src.conversation.action import action
-from src.llm.sentence import sentence
+from src.llm.sentence import Sentence
 from src.output_manager import ChatManager
 from src.remember.remembering import remembering
 from src.remember.summaries import summaries
@@ -54,18 +53,15 @@ class GameStateManager:
         if self.__talk: #This should only happen if game and server are out of sync due to some previous error -> close conversation and start a new one
             self.__talk.end()
             self.__talk = None
+
         world_id = "default"
         if input_json.__contains__(comm_consts.KEY_STARTCONVERSATION_WORLDID):
             world_id = input_json[comm_consts.KEY_STARTCONVERSATION_WORLDID]
             world_id = self.WORLD_ID_CLEANSE_REGEX.sub("", world_id)
+
         if input_json.__contains__(comm_consts.KEY_INPUTTYPE):
-            if input_json[comm_consts.KEY_INPUTTYPE] in (comm_consts.KEY_INPUTTYPE_MIC, comm_consts.KEY_INPUTTYPE_PTT):
-                self.__mic_input = True
-                # only init Transcriber if mic input is enabled
-                self.__stt = Transcriber(self.__config, self.__stt_api_file, self.__api_file)
-                if input_json[comm_consts.KEY_INPUTTYPE] == comm_consts.KEY_INPUTTYPE_PTT:
-                    self.__mic_ptt = True
-                
+            self.process_stt_setup(input_json)
+        
         context_for_conversation = context(world_id, self.__config, self.__client, self.__rememberer, self.__language_info)
         self.__talk = conversation(context_for_conversation, self.__chat_manager, self.__rememberer, self.__client, self.__stt, self.__mic_input, self.__mic_ptt)
         self.__update_context(input_json)
@@ -81,6 +77,11 @@ class GameStateManager:
     async def continue_conversation(self, input_json: dict[str, Any]) -> dict[str, Any]:
         if(not self.__talk ):
             return self.error_message("No running conversation.")
+        
+        # comm_consts.KEY_INPUTTYPE is passed when the mic settings have been changed in the MCM since beginning the conversation
+        # If this happens, switch the STT settings to match the new input type
+        if input_json.__contains__(comm_consts.KEY_INPUTTYPE):
+            self.process_stt_setup(input_json)
         
         if input_json.__contains__(comm_consts.KEY_REQUEST_EXTRA_ACTIONS):
             extra_actions: list[str] = input_json[comm_consts.KEY_REQUEST_EXTRA_ACTIONS]
@@ -159,6 +160,21 @@ class GameStateManager:
         logging.log(25, 'https://art-from-the-machine.github.io/Mantella/pages/issues_qna')
         logging.log(24, '\nWaiting for player to select an NPC...')
         return {comm_consts.KEY_REPLYTYPE: comm_consts.KEY_REPLYTYPE_ENDCONVERSATION}
+    
+    def process_stt_setup(self, input_json: dict[str, Any]):
+        '''Process the STT setup (mic / text / push-to-talk) based on the settings passed in the input JSON'''
+        if input_json[comm_consts.KEY_INPUTTYPE] in (comm_consts.KEY_INPUTTYPE_MIC, comm_consts.KEY_INPUTTYPE_PTT):
+            self.__mic_input = True
+            # only init Transcriber if mic input is enabled
+            if not self.__stt:
+                self.__stt = Transcriber(self.__config, self.__stt_api_file, self.__api_file)
+            if input_json[comm_consts.KEY_INPUTTYPE] == comm_consts.KEY_INPUTTYPE_PTT:
+                self.__mic_ptt = True
+        else:
+            self.__mic_input = False
+            if self.__stt:
+                self.__stt.stop_listening()
+                self.__stt = None
 
     ####### JSON constructions #########
 
@@ -170,7 +186,7 @@ class GameStateManager:
         }
     
     @utils.time_it
-    def sentence_to_json(self, sentence_to_prepare: sentence, topicID: int) -> dict[str, Any]:
+    def sentence_to_json(self, sentence_to_prepare: Sentence, topicID: int) -> dict[str, Any]:
         return {
             comm_consts.KEY_ACTOR_SPEAKER: sentence_to_prepare.speaker.name,
             comm_consts.KEY_ACTOR_LINETOSPEAK: self.__abbreviate_text(sentence_to_prepare.text.strip()),
